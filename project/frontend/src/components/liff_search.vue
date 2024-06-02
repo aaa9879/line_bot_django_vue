@@ -64,7 +64,7 @@ export default {
       const apiUrl = `${this.$apiUrl}/api/get_personal_account/`;
       console.log(apiUrl);
       console.log(this.$root.$userId);
-      this.$axios.post(apiUrl, { userId: this.$root.$userId })
+      this.$axios.post(apiUrl, { userId: this.$root.$userId,name:this.$root.$userName })//6/2
         .then(response => {
           this.accounts = response.data.accounts;
         })
@@ -83,7 +83,7 @@ export default {
     },
     navigateToKeep() {
       this.$router.push({ name: 'liff_keep' });
-    }
+    },
   },
   mounted() {
     const checkUserId = () => {
