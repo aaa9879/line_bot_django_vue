@@ -6,3 +6,4 @@
 #liff_personal_form.vue
 #main.js
 #App.vue
+#liff.search.vue
