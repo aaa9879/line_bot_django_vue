@@ -18,7 +18,7 @@ export default {
   beforeCreate() {
     if (window.liff) {
       window.liff.init({
-        liffId: '2004983305-2LqXBLZr'
+        liffId: '2005419810-weQvN4rd'
       }).then(() => {
         this.getProfile();
       }).catch((error) => {
@@ -35,7 +35,7 @@ export default {
         window.liff.getProfile().then((profile) => {
           this.profile = profile;
           this.$root.$userId = profile.userId;
-          
+          this.$root.$userName = profile.displayName;//6/2
         }).catch((error) => {
           console.error('獲取Profile失敗', error);
         });
