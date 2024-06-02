@@ -15,7 +15,6 @@
     <div id="loading" v-if="loading">載入中，請稍後...</div>
   </div>
 </template>
-
 <script>
 export default {
   
