@@ -1,7 +1,6 @@
 import os
 import secrets,string,json
 from line_bot_app.models import * #記得要改line_bot_app如果你和我不一樣
-
 from langchain_community.utilities import SQLDatabase
 from langchain_openai import ChatOpenAI
 from module.langchain_tool import *
@@ -101,14 +100,14 @@ def classification(text,personal_id,transaction_type):
     #沒有的話就維持一樣空值
     else:
         item = item
-    return_data = {
-        'user_id':personal_id,
-        'category': pred_category,
-        'item': item,
-        'payment':payment,
-        'location':location,
-        'transaction_type':transaction_type
-    }
+        return_data = {
+            'user_id':personal_id,
+            'category': pred_category,
+            'item': item,
+            'payment':payment,
+            'location':location,
+            'transaction_type':transaction_type
+        }
     return return_data
 
 def get_payment_location_item(messages, tools=None, tool_choice=None, model=GPT_MODEL):
