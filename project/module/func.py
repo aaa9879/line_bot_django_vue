@@ -73,6 +73,7 @@ def classification(text,personal_id,transaction_type):
     messages = []
     user_category_set_str =''
     pred_category=''
+    return_data ={}
     messages.append({"role": "system", "content": "Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous."})
     messages.append({"role": "user", "content": text})
     chat_response = get_payment_location_item(
@@ -100,7 +101,7 @@ def classification(text,personal_id,transaction_type):
     #沒有的話就維持一樣空值
     else:
         item = item
-        return_data = {
+    return_data = {
             'user_id':personal_id,
             'category': pred_category,
             'item': item,
