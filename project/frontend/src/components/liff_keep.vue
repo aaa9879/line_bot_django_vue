@@ -16,8 +16,8 @@
   </div>
 </template>
 <script>
+import Swal from 'sweetalert2';
 export default {
-  
   data() {
     return {
       type: '',
@@ -29,11 +29,17 @@ export default {
   methods: {
     handleReserve() {
       if(this.type === ''){
-        alert('請選擇收入或支出');
+        Swal.fire({
+          title: "請選擇支出與收入!",
+          icon: "warning"
+        });
         return;
       }
       if(this.input === ''){
-        alert('請輸入記帳資訊');
+        Swal.fire({
+          title: "請輸入記帳資訊!",
+          icon: "warning"
+        });
         return;
       }
       this.loading = true;
