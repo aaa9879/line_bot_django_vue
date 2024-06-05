@@ -17,9 +17,9 @@ os.environ["OPENAI_API_KEY"] = settings.OPENAI_API_KEY
 llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
 GPT_MODEL = "gpt-3.5-turbo-0613"
 client = OpenAI()#new
+#6/3
 #創建群組
-def CreateGroup(mtext,user_id):
-    temp = mtext[6:]#取得井字號的後面
+def CreateGroup(groupname,user_id):
     letters = string.ascii_letters#產生英文字母
     digits = string.digits#產生字串
     # 如果有和資料庫重複會重新生成
@@ -27,7 +27,7 @@ def CreateGroup(mtext,user_id):
         secure_random_string = ''.join(secrets.choice(letters) + secrets.choice(digits) for i in range(15))#數字和英文字母串接
         if not GroupTable.objects.filter(group_code=secure_random_string).exists():
             break
-    group_name = temp
+    group_name = groupname
     group_code = secure_random_string
     try:
         #剛創建的群組加入資料庫
@@ -35,10 +35,9 @@ def CreateGroup(mtext,user_id):
         unit.save()
         #抓取群組的id且把資料加入到linking table中
         group = GroupTable.objects.get(group_id=unit.group_id)
-        user_instance = PersonalTable.objects.get(personal_id=user_id)
+        user_instance = PersonalTable.objects.get(line_id=user_id)
         try:
             unit3 = PersonalGroupLinkingTable.objects.create(personal=user_instance,group=group)
-            return '成功創建群組'
         except Exception as e:
             print(f"Error creating linking table record: {e}")
     except Exception as e:
@@ -96,7 +95,7 @@ def classification(text,personal_id,transaction_type):
         user_category_set_str = ', '.join(user_category_set)
         #類別
         agent = get_category_classification_tool(llm)
-        data = agent(f"=使用者輸入：{text}，類別:{user_category_set_str}，請替使用者的輸入做帳目的分類")['output']
+        data = agent(f"=使用者輸入：{text}，類別:{user_category_set_str}，ex:預測餐費就輸出餐費")['output']
         pred_category = str(data)
     #沒有的話就維持一樣空值
     else:
@@ -170,3 +169,5 @@ def address_sure(personal_id,item,payment,location,category,time):
     category_id = unit.personal_category_id
     unit2 = PersonalAccountTable(item=item,account_date=time,location=location,payment=payment,info_complete_flag=1,personal_id=personal_id,category_id=category_id)
     unit2.save()    
+
+# def sqlagent(text):
