@@ -28,21 +28,14 @@
   </div>
 </template>
 <script>
+import Swal from 'sweetalert2';
 export default {
     props: {
       formData : Object
     },
     data() {
       return {
-        currentTime: this.formatCurrentTime(), 
-            formData: {
-            user_id:this.formData.user_id,
-            item:this.formData.item ,
-            payment:this.formData.payment ,
-            location:this.formData.location,
-            transaction_type:this.formData.transaction_type,
-            category:this.formData.category
-        },
+        currentTime: this.formatCurrentTime(),
       };
     },
     methods: {
@@ -51,10 +44,10 @@ export default {
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');
         const day = String(now.getDate()).padStart(2, '0');
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        //const hours = String(now.getHours()).padStart(2, '0');
+        //const minutes = String(now.getMinutes()).padStart(2, '0');
+        //const seconds = String(now.getSeconds()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
       },
       temporary() {
         this.currentTime = this.formatCurrentTime();
@@ -69,7 +62,10 @@ export default {
           time:this.currentTime
         }).then(response => {
           console.log(response);
-          alert('暫存成功');
+          Swal.fire({
+              title: "暫存成功!!",
+              icon: "success"
+          });
           this.$router.push({ name: 'liff_search'});
         })
         .catch(error => {
@@ -79,8 +75,11 @@ export default {
       sure(){
         for (let key in this.formData) {
           if (!this.formData[key]) {
-            alert("有空白無法完成確認，只能按暫存，謝謝!");
-            return; 
+            Swal.fire({
+              title: "有空白無法完成確認，只能按暫存!",
+              icon: "warning"
+            });
+            return;
           }
         }
         this.currentTime = this.formatCurrentTime();
@@ -95,7 +94,10 @@ export default {
           time:this.currentTime
         }).then(response => {
           console.log(response);
-          alert('完成');
+          Swal.fire({
+              title: "完成記帳!!",
+              icon: "success"
+          });
           this.$router.push({ name: 'liff_search'});
         })
         .catch(error => {
