@@ -29,11 +29,20 @@ def callback(request):
             return HttpResponseForbidden()
         except LineBotApiError:
             return HttpResponseBadRequest()
+        for event in events:
+            if isinstance(event,MessageEvent):
+                if isinstance(event.message,TextMessage):
+                    mtext = event.message.text
+                    if mtext == "查詢":
+                        line_bot_api.reply_message(event.reply_token, TextMessage(text="請輸入想問的帳目問題"))
+                    else:
+                        print('OK')
+                        # func.sqlagent(mtext)
         return HttpResponse()
     else:
         return HttpResponseBadRequest()
 
-#6/2
+#6/2 
 @csrf_exempt
 @require_http_methods(["POST", "OPTIONS"])
 def get_user_account(request):
@@ -71,7 +80,7 @@ def get_user_account(request):
                     "personal_account_id": account.personal_account_id,
                     "item": account.item,
                     "account_date": account.account_date.strftime(
-                        '%Y-%m-%d %H:%M:%S') if account.account_date else None,
+                        '%Y-%m-%d') if account.account_date else None,
                     "location": account.location,
                     "payment": account.payment,
                     "flag": account.info_complete_flag,
@@ -80,10 +89,13 @@ def get_user_account(request):
                     "category_name": category_name
                 }
                 account_list.append(account_data)
-
+            #把那個人的peronsal_id抓出來，因為空白的表單需要peronsal_id
+            personal = PersonalTable.objects.get(line_id = user_id)
+            personal_id = personal.personal_id
             response_data = {
                 "message": "Data received successfully",
-                "accounts": account_list
+                "accounts": account_list,
+                "personal_id":personal_id
             }
             return HttpResponse(json.dumps(response_data), content_type="application/json")
         except json.JSONDecodeError:
@@ -157,7 +169,6 @@ def get_keep_sure(request):
         try:
             data = json.loads(request.body.decode('utf-8'))
             personal_id = data.get('userID')
-            print(personal_id)
             item = data.get('item')
             payment = data.get('payment')
             location = data.get('location')
@@ -172,3 +183,23 @@ def get_keep_sure(request):
             return JsonResponse({'error': '無效的JSON數據'}, status=400)
     else:
          return JsonResponse({'error': '支持POST請求'}, status=405)
+@csrf_exempt
+@require_http_methods(["POST", "OPTIONS"])
+def creategroup(request):
+    if request.method == "OPTIONS":
+        response = HttpResponse()
+        response['Allow'] = 'POST, OPTIONS'
+        return response
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            line_id = data.get("userId")
+            group_name = data.get("GroupName")
+            func.CreateGroup(group_name,line_id)
+            response_data ='成功接收數據'
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
+        except json.JSONDecodeError:
+            return JsonResponse({'error': '無效的JSON數據'}, status=400)
+    else:
+         return JsonResponse({'error': '支持POST請求'}, status=405)
+     
